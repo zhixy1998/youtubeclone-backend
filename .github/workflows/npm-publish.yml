@@ -1,0 +1,42 @@
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [14]
+        os: [CentOS Linux 8]
+
+    steps:
+    - name: deploy
+      uses: appleboy/ssh-action@master
+      env:
+        ACCESSKEYID: ${{ secrets.ACCESSKEYID }}
+        ACCESSKEYSECRET: ${{ secrets.ACCESSKEYSECRET }}
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        # key: ${{ secrets.KEY }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        envs: ACCESSKEYID,ACCESSKEYSECRET
+        script: |
+          export ACCESSKEYID=$ACCESSKEYID
+          export ACCESSKEYSECRET=$ACCESSKEYSECRET
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+          cd /root/youtubeclone-backend
+          git pull origin master
+          npm install --production
+          npm run stop
+          npm run start
