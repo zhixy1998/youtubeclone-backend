@@ -32,8 +32,9 @@ jobs:
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-          cd /root/youtubeclone-backend
-          git pull origin master
+          cd /root
+          git pull origin main
+          cd  /root/youtubeclone-backend
           npm install --production
           npm run stop
           npm run start
